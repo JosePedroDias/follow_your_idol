@@ -18,10 +18,12 @@ func main() {
 
 	twitter.Setup(cfg)
 
-	// users bhaenow FleurEast
+	// 1) FETCH TWEETS FROM USER AND PERSIST THEM
+
+	// users Bhaenow FleurEast AndreaFaustini1
 	// 1st (most recent)   592717057994686464
 	// last                590164133846380544
-	tweets, err := twitter.GetSearch("from:bhaenow", "", "") // from:screenName, moreRecentThan, olderOrEqualTo
+	tweets, err := twitter.GetSearch("from:AndreaFaustini1", "", "") // from:screenName, moreRecentThan, olderOrEqualTo
 	if err != nil {
 		panic(err)
 	}
@@ -46,4 +48,14 @@ func main() {
 		}
 		// print.DisplayTweetAsJSON(&tweet)
 	}
+
+	// 2) DISPLAY CACHED USER
+
+	//user, _ := persistence.LoadUser("Bhaenow")
+	//print.DisplayUser(user)
+
+	// 3) DISPLAY CACHED TWEET
+
+	//tweet, _ := persistence.LoadTweet("592717057994686464")
+	//print.DisplayTweet(tweet)
 }

@@ -21,6 +21,8 @@ func Setup() error {
 	return err
 }
 
+// ----------------------
+
 func SaveUser(user *anaconda.User) error {
 	doc, err := json.Marshal(user)
 	if err != nil {
@@ -32,6 +34,21 @@ func SaveUser(user *anaconda.User) error {
 	return err
 }
 
+func LoadUser(screenName string) (*anaconda.User, error) {
+	var user anaconda.User
+	var doc []byte
+
+	row := db.QueryRow(`SELECT document
+		FROM twitter_user
+		WHERE screen_name = $1`, screenName)
+	row.Scan(&doc)
+
+	err := json.Unmarshal(doc, &user)
+	return &user, err
+}
+
+// ----------------------
+
 func SaveTweet(tweet *anaconda.Tweet) error {
 	doc, err := json.Marshal(tweet)
 	if err != nil {
@@ -41,4 +58,17 @@ func SaveTweet(tweet *anaconda.Tweet) error {
 		(tweet_id, user_id, document)
 		VALUES ($1, $2, $3)`, tweet.IdStr, tweet.User.IdStr, doc)
 	return err
+}
+
+func LoadTweet(tweetId string) (*anaconda.Tweet, error) {
+	var tweet anaconda.Tweet
+	var doc []byte
+
+	row := db.QueryRow(`SELECT document
+		FROM twitter_tweet
+		WHERE tweet_id = $1`, tweetId)
+	row.Scan(&doc)
+
+	err := json.Unmarshal(doc, &tweet)
+	return &tweet, err
 }

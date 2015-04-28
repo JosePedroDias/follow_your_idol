@@ -36,8 +36,8 @@ func DisplayTweetAsJSON(tweet *anaconda.Tweet) {
 	fmt.Printf("%s\n", tweetJSON)
 }
 
-/*func DisplayUser(user *anaconda.User) {
-	fmt.Printf("--( USER )--\n")
+func DisplayUser(user *anaconda.User) {
+	//fmt.Printf("--( USER )--\n")
 	fmt.Printf("name:        %s\n", user.Name)
 	fmt.Printf("desc:        %s\n", user.Description)
 	fmt.Printf("id:          %d\n", user.Id)
@@ -49,7 +49,7 @@ func DisplayTweetAsJSON(tweet *anaconda.Tweet) {
 	fmt.Printf("location:    %s\n", user.Location)
 	fmt.Printf("created at:  %s\n", user.CreatedAt)
 
-	if user.Status != nil {
+	/*if user.Status != nil {
 		DisplayTweet(user.Status)
-	}
-}*/
+	}*/
+}

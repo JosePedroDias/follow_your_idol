@@ -1,17 +1,26 @@
+-- http://www.postgresql.org/docs/9.3/static/functions.html
+-- http://www.postgresql.org/docs/9.3/static/functions-aggregate.html
+
 SELECT COUNT(*)
 FROM twitter_tweet;
 
-SELECT user_id, COUNT(user_id)
+SELECT
+	user_id,
+	COUNT(user_id) as num_tweets,
+	MIN(TO_TIMESTAMP(document->>'created_at', 'Dy Mon DD HH24:MI:SS 9999 YYYY')) as oldest,
+	MAX(TO_TIMESTAMP(document->>'created_at', 'Dy Mon DD HH24:MI:SS 9999 YYYY')) as newest
 FROM twitter_tweet
 GROUP BY user_id;
 
 SELECT
-    document->>'created_at' as created_at,
     tweet_id,
+    TO_TIMESTAMP(document->>'created_at', 'Dy Mon DD HH24:MI:SS 9999 YYYY') as created_at,
+    document->'user'->>'screen_name' as from,
     document->>'text' as text,
     document->>'favorite_count' as favorites,
     document->>'retweet_count' as retweets
-FROM twitter_tweet;
+FROM twitter_tweet
+where tweet_id = '592717057994686464';
 
 ----
 

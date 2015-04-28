@@ -23,13 +23,13 @@ func main() {
 	// users Bhaenow FleurEast AndreaFaustini1
 	// 1st (most recent)   592717057994686464
 	// last                590164133846380544
-	tweets, err := twitter.GetSearch("from:AndreaFaustini1", "", "") // from:screenName, moreRecentThan, olderOrEqualTo
+	//tweets, err := twitter.GetSearch("from:AndreaFaustini1", "", "") // from:screenName, moreRecentThan, olderOrEqualTo
+	tweets, err := twitter.GetUserTimeline("FleurEast", "", "") // from:screenName, moreRecentThan, olderOrEqualTo
 	if err != nil {
 		panic(err)
 	}
 
 	count := len(tweets)
-	fmt.Printf("\n# tweets: %d\n\n", count)
 
 	if count > 0 {
 		//print.DisplayUser()
@@ -48,6 +48,8 @@ func main() {
 		}
 		// print.DisplayTweetAsJSON(&tweet)
 	}
+
+	fmt.Printf("\n# tweets: %d\n\n", count)
 
 	// 2) DISPLAY CACHED USER
 

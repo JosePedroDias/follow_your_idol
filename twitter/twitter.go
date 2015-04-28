@@ -19,9 +19,9 @@ func Setup(config *config.Config) {
 
 func GetSearch(query string, moreRecentThan string, olderOrEqualTo string) ([]anaconda.Tweet, error) {
 	v := url.Values{}
-	v.Set("result_type", "recent") // mixed, recent, popular
+	v.Set("result_type", "recent") // one of: mixed, recent, popular
 	v.Set("include_entities", "false")
-	v.Set("count", "100") // TWEETS PER PAGE
+	v.Set("count", "100") // TWEETS PER PAGE (100 is max)
 	if len(olderOrEqualTo) > 0 {
 		v.Set("max_id", olderOrEqualTo)
 	}
@@ -31,5 +31,27 @@ func GetSearch(query string, moreRecentThan string, olderOrEqualTo string) ([]an
 	//v.Set("until", "2015-04-20")
 
 	tweets, err := api.GetSearch(query, v)
+	return tweets, err
+}
+
+// https://dev.twitter.com/rest/reference/get/statuses/user_timeline
+// https://dev.twitter.com/rest/public/timelines
+
+func GetUserTimeline(screenName string, moreRecentThan string, olderOrEqualTo string) ([]anaconda.Tweet, error) {
+	v := url.Values{}
+	v.Set("screen_name", screenName)
+	//v.Set("trim_user", "true")
+	//v.Set("exclude_replies", "true")
+	//v.Set("include_rts", "true")
+	v.Set("count", "200") // TWEETS PER PAGE (200 is max)
+	if len(olderOrEqualTo) > 0 {
+		v.Set("max_id", olderOrEqualTo)
+	}
+	if len(moreRecentThan) > 0 {
+		v.Set("since_id", moreRecentThan)
+	}
+	//v.Set("until", "2015-04-20")
+
+	tweets, err := api.GetUserTimeline(v)
 	return tweets, err
 }

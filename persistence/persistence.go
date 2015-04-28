@@ -1,6 +1,9 @@
 package persistence
 
 // pgadmin
+// psql -W follow_your_idol jdias
+// select * from twitter_user;
+// select * from twitter_tweet;
 
 import (
 	"database/sql"

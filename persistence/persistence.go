@@ -26,7 +26,6 @@ func SaveUser(user *anaconda.User) error {
 	_, err = db.Exec(`INSERT INTO twitter_user
 		(screen_name, document)
 		VALUES ($1, $2)`, user.ScreenName, doc)
-
 	return err
 }
 
@@ -38,6 +37,5 @@ func SaveTweet(tweet *anaconda.Tweet) error {
 	_, err = db.Exec(`INSERT INTO twitter_tweet
 		(tweet_id, user_id, document)
 		VALUES ($1, $2, $3)`, tweet.IdStr, tweet.User.IdStr, doc)
-
 	return err
 }

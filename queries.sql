@@ -7,19 +7,21 @@ GROUP BY user_id
 
 SELECT
     document->>'created_at' as created_at,
+    tweet_id,
     document->>'text' as text
 FROM twitter_tweet
 
 ----
 
 -- "191431067" "FleurEast"
+-- "702764472" "Bhaenow"
 
 SELECT COUNT(*)
 FROM twitter_user
 
 SELECT
-  screen_name,
   document->>'id' as user_id,
+  screen_name,
   document->>'name' as name
 FROM twitter_user
 

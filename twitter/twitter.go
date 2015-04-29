@@ -8,7 +8,7 @@ import (
 
 var api *anaconda.TwitterApi
 
-func Setup(config *config.Config) {
+func Setup(config *config.TwitterConfig) {
 	anaconda.SetConsumerKey(config.ConsumerKey)
 	anaconda.SetConsumerSecret(config.ConsumerSecret)
 	api = anaconda.NewTwitterApi(config.AccessTokenKey, config.AccessTokenSecret)

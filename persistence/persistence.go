@@ -8,16 +8,17 @@ package persistence
 import (
 	"database/sql"
 	"encoding/json"
-	// "fmt"
+	"fmt"
 	"github.com/ChimeraCoder/anaconda"
 	_ "github.com/lib/pq"
+	"gitlab.com/josepedrodias/follow_your_idol/config"
 )
 
 var db *sql.DB
 
-func Setup() error {
+func Setup(config *config.PostgresqlConfig) error {
 	var err error
-	db, err = sql.Open("postgres", "dbname=follow_your_idol user=jdias password=arena666 sslmode=disable")
+	db, err = sql.Open("postgres", fmt.Sprintf("dbname=%s user=%s password=%s sslmode=%s", config.DbName, config.User, config.Password, config.SslMode))
 	return err
 }
 

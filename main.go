@@ -9,14 +9,18 @@ import (
 )
 
 func main() {
-	cfg, err := config.FromJSONFile("config.json")
+	tCfg, err := config.TwitterFromFile("twitter_config.json")
+	if err != nil {
+		panic(err)
+	}
+	pCfg, err := config.PostgresqlFromFile("postgresql_config.json")
 	if err != nil {
 		panic(err)
 	}
 
-	persistence.Setup()
+	persistence.Setup(pCfg)
 
-	twitter.Setup(cfg)
+	twitter.Setup(tCfg)
 
 	// 1) FETCH TWEETS FROM USER AND PERSIST THEM
 

@@ -1,7 +1,9 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"github.com/ChimeraCoder/anaconda"
 	"gitlab.com/josepedrodias/follow_your_idol/config"
 	"gitlab.com/josepedrodias/follow_your_idol/persistence"
 	"gitlab.com/josepedrodias/follow_your_idol/print"
@@ -9,6 +11,8 @@ import (
 )
 
 func main() {
+
+	// 0) READ CONFIG AND PREPARE MODULES
 	tCfg, err := config.TwitterFromFile("twitter_config.json")
 	if err != nil {
 		panic(err)
@@ -18,50 +22,76 @@ func main() {
 		panic(err)
 	}
 
-	persistence.Setup(pCfg)
+	// https://golang.org/pkg/flag/
+	// https://gobyexample.com/command-line-flags
+	cmdTimeline := flag.String("timeline", "", `command. fetches user timeline tweets using the twitter API. Accepts screenName ex:"Bhaenow"`)
+	cmdSearch := flag.String("search", "", `command. searches tweets using the twitter API. Accepts query string. ex:"from:Bhaenow"`)
+	cmdGetTweet := flag.String("get_tweet", "", `command. returns cached tweet from the database. Accepts twitterId. ex:"592717057994686464"`)
+	cmdGetUser := flag.String("get_user", "", `command. returns cached twitter user from the database. Accepts screenName. ex:"Bhaenow"`)
 
+	optMoreRecentThan := flag.String("more_recent_than", "", `option. if passed, filters only tweets more recent than given tweet id. ex:"592717057994686464"`)
+	optOlderOrEqualTo := flag.String("older_or_equal_to", "", `option. if passed, filters only tweets older or equal to given tweet id. ex:"592717057994686464"`)
+
+	flag.Parse()
+
+	fmt.Println("\nParsed arguments:")
+	fmt.Printf("timeline  [%v]\n", *cmdTimeline)
+	fmt.Printf("search    [%v]\n", *cmdSearch)
+	fmt.Printf("get_tweet [%v]\n", *cmdGetTweet)
+	fmt.Printf("get_user  [%v]\n", *cmdGetUser)
+	fmt.Println("----")
+	fmt.Printf("more_recent_than  [%v]\n", *optMoreRecentThan)
+	fmt.Printf("older_or_equal_to [%v]\n", *optOlderOrEqualTo)
+	fmt.Println("")
+
+	persistence.Setup(pCfg)
 	twitter.Setup(tCfg)
 
-	// 1) FETCH TWEETS FROM USER AND PERSIST THEM
+	if len(*cmdTimeline) > 0 || len(*cmdSearch) > 0 {
+		var tweets []anaconda.Tweet
+		var err error
 
-	// users Bhaenow FleurEast AndreaFaustini1
-	// 1st (most recent)   592717057994686464
-	// last                590164133846380544
-	//tweets, err := twitter.GetSearch("from:AndreaFaustini1", "", "") // from:screenName, moreRecentThan, olderOrEqualTo
-	tweets, err := twitter.GetUserTimeline("FleurEast", "", "") // from:screenName, moreRecentThan, olderOrEqualTo
-	if err != nil {
-		panic(err)
-	}
-
-	count := len(tweets)
-
-	if count > 0 {
-		//print.DisplayUser()
-		err := persistence.SaveUser(&tweets[0].User)
-		if err != nil {
-			fmt.Println("user persistence skipped")
+		if len(*cmdTimeline) > 0 {
+			tweets, err = twitter.GetUserTimeline(*cmdTimeline, *optMoreRecentThan, *optOlderOrEqualTo)
+		} else {
+			tweets, err = twitter.GetSearch(*cmdSearch, *optMoreRecentThan, *optOlderOrEqualTo)
 		}
-	}
 
-	for _, tweet := range tweets {
-		//fmt.Printf("#%d\n", idx)
-		print.DisplayTweet(&tweet)
-		err = persistence.SaveTweet(&tweet)
 		if err != nil {
-			fmt.Println("tweet persistence skipped")
+			panic(err)
 		}
-		// print.DisplayTweetAsJSON(&tweet)
+
+		count := len(tweets)
+		stored := 0
+
+		if count > 0 {
+			//print.DisplayUser()
+			err := persistence.SaveUser(&tweets[0].User)
+			if err != nil {
+				fmt.Println("user persistence skipped")
+			}
+		}
+
+		for _, tweet := range tweets {
+			print.DisplayTweet(&tweet)
+			//print.DisplayTweetAsJSON(&tweet)
+
+			err = persistence.SaveTweet(&tweet)
+			if err != nil {
+				fmt.Println("tweet persistence skipped")
+			} else {
+				stored += 1
+			}
+		}
+
+		fmt.Printf("\n# tweets: %d / %d\n\n", stored, count)
+	} else if len(*cmdGetTweet) > 0 {
+		tweet, _ := persistence.LoadTweet(*cmdGetTweet)
+		print.DisplayTweet(tweet)
+	} else if len(*cmdGetUser) > 0 {
+		user, _ := persistence.LoadUser(*cmdGetUser)
+		print.DisplayUser(user)
+	} else {
+		fmt.Println("No command passed - nothing to do. Use -help to learn the command-line API.")
 	}
-
-	fmt.Printf("\n# tweets: %d\n\n", count)
-
-	// 2) DISPLAY CACHED USER
-
-	//user, _ := persistence.LoadUser("Bhaenow")
-	//print.DisplayUser(user)
-
-	// 3) DISPLAY CACHED TWEET
-
-	//tweet, _ := persistence.LoadTweet("592717057994686464")
-	//print.DisplayTweet(tweet)
 }

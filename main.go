@@ -26,6 +26,8 @@ func main() {
 	// https://gobyexample.com/command-line-flags
 	cmdTimeline := flag.String("timeline", "", `command. fetches user timeline tweets using the twitter API. Accepts screenName ex:"Bhaenow"`)
 	cmdSearch := flag.String("search", "", `command. searches tweets using the twitter API. Accepts query string. ex:"from:Bhaenow"`)
+
+	cmdDbStats := flag.Bool("db_stats", false, `command. returns database status. Does not accept argument.`)
 	cmdGetTweet := flag.String("get_tweet", "", `command. returns cached tweet from the database. Accepts twitterId. ex:"592717057994686464"`)
 	cmdGetUser := flag.String("get_user", "", `command. returns cached twitter user from the database. Accepts screenName. ex:"Bhaenow"`)
 
@@ -37,6 +39,8 @@ func main() {
 	fmt.Println("\nParsed arguments:")
 	fmt.Printf("timeline  [%v]\n", *cmdTimeline)
 	fmt.Printf("search    [%v]\n", *cmdSearch)
+
+	fmt.Printf("db_stats  [%v]\n", *cmdDbStats)
 	fmt.Printf("get_tweet [%v]\n", *cmdGetTweet)
 	fmt.Printf("get_user  [%v]\n", *cmdGetUser)
 	fmt.Println("----")
@@ -47,7 +51,17 @@ func main() {
 	persistence.Setup(pCfg)
 	twitter.Setup(tCfg)
 
-	if len(*cmdTimeline) > 0 || len(*cmdSearch) > 0 {
+	if *cmdDbStats {
+		statuses, err := persistence.GetTwitterUserStatus()
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(" user_id   | screen_name     | tweets | oldest     | newest     | oldest_id          | newest_id")
+		fmt.Println("-----------+-----------------+--------+------------+------------+--------------------+--------------------")
+		for _, s := range statuses {
+			fmt.Printf(" %s | %-15s | %6d | %s | %s | %s | %s\n", s.UserId, s.ScreenName, s.NumTweets, s.Oldest.Format("2006-01-02"), s.Newest.Format("2006-01-02"), s.OldestId, s.NewestId)
+		}
+	} else if len(*cmdTimeline) > 0 || len(*cmdSearch) > 0 {
 		var tweets []anaconda.Tweet
 		var err error
 

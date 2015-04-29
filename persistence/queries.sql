@@ -8,9 +8,23 @@ SELECT
 	user_id,
 	COUNT(user_id) as num_tweets,
 	MIN(TO_TIMESTAMP(document->>'created_at', 'Dy Mon DD HH24:MI:SS 9999 YYYY')) as oldest,
-	MAX(TO_TIMESTAMP(document->>'created_at', 'Dy Mon DD HH24:MI:SS 9999 YYYY')) as newest
+	MAX(TO_TIMESTAMP(document->>'created_at', 'Dy Mon DD HH24:MI:SS 9999 YYYY')) as newest,
+	MIN(tweet_id) as oldest_id,
+	MAX(tweet_id) as newest_id
 FROM twitter_tweet
 GROUP BY user_id;
+
+SELECT
+	t.user_id,
+	COUNT(t.user_id) as num_tweets,
+	MIN(TO_TIMESTAMP(t.document->>'created_at', 'Dy Mon DD HH24:MI:SS 9999 YYYY')) as oldest,
+	MAX(TO_TIMESTAMP(t.document->>'created_at', 'Dy Mon DD HH24:MI:SS 9999 YYYY')) as newest,
+	MIN(t.tweet_id) as oldest_id,
+	MAX(t.tweet_id) as newest_id
+FROM twitter_tweet as t, twitter_user as u
+WHERE u.user_id = t.user_id
+GROUP BY t.user_id;
+
 
 SELECT
     tweet_id,
@@ -31,9 +45,8 @@ SELECT COUNT(*)
 FROM twitter_user;
 
 SELECT
-  document->>'id' as user_id,
   screen_name,
-  document->>'name' as name
+  user_id
 FROM twitter_user;
 
 SELECT
@@ -49,3 +62,5 @@ SELECT
 	document->>'created_at' as created_at
 FROM twitter_user
 WHERE screen_name = 'Bhaenow';
+
+select screen_name, document->>'id' as user_id from twitter_user;

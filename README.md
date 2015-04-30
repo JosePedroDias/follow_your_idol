@@ -9,11 +9,11 @@ This project uses PortgreSQL JSON columns to store tweets and users so the Postg
 
 # setup
 
-Create a twitter account for hacking (recommended not to use your personal one, in case you perform bogus actions) and request credentials for its API.  
-Create a database for caching the Twitter content.  
-Create the files `postgresql_config.json` and `postgresql_config.json` (use the example files `postgresql_config_example.json` and `postgresql_config_example.json` as reference for the required fields).  
-Perform the queries listed in `persistence\model.sql` to create the necessary db schema.  
-You'll find some notes on `persistence\queries.sql` if you want to explore the data yourself.
+1. Create a twitter account for hacking (recommended not to use your personal one, in case you perform bogus actions) and request credentials for its API.
+1. Create a database for caching the Twitter content.
+1. Create the files `postgresql_config.json` and `postgresql_config.json` (use the example files `postgresql_config_example.json` and `postgresql_config_example.json` as reference for the required fields).
+1. Perform the queries listed in `persistence\model.sql` to create the necessary db schema.
+1. You'll find some notes on `persistence\queries.sql` if you want to explore the data yourself.
 
 
 # how to use
@@ -25,10 +25,10 @@ use `./follow_your_idol -help` for an updated list of operations/options
 
 Some operations work with the twitter API, some others make exclusive work of the data cached in your database.
 
-These use twitter: `timeline`, `search`, `quota`  
-These don't: `db_stats` `fts`, `get_tweet`, `get_user`  
-These are optional, in both `timeline` and `search` operations: `more_recent_than`, `older_or_equal_to` (for twitter pagination, supports a twitter_id string or `auto`)
-`quota` and `db_stats` don't take any argument.
+* These use twitter: `timeline`, `search`, `quota`
+* These don't: `db_stats` `fts`, `get_tweet`, `get_user`
+* These are optional, in both `timeline` and `search` operations: `more_recent_than`, `older_or_equal_to` (for twitter pagination, supports a twitter_id string or `auto`)
+* `quota` and `db_stats` don't take any argument.
 
 
 ## examples

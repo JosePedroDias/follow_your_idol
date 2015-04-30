@@ -18,3 +18,17 @@ CREATE TABLE twitter_user
   document json,
   CONSTRAINT twitter_user_pkey PRIMARY KEY (screen_name)
 );
+
+-- FOR FULL TEXT SEARCH
+
+CREATE MATERIALIZED VIEW twitter_tweet_indexed AS 
+SELECT
+  user_id,
+  tweet_id,
+  document->>'text' as body,
+  to_tsvector('english', document->>'text') as body2
+FROM twitter_tweet;
+
+-- CREATE INDEX
+
+CREATE INDEX idx_body2_search ON twitter_tweet_indexed USING gin(body2);

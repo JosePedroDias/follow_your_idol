@@ -13,3 +13,14 @@
 ./follow_your_idol -timeline FleurEast       -older_or_equal_to 563793692897869824
 ./follow_your_idol -timeline Bhaenow         -older_or_equal_to 560774763145347073
 ./follow_your_idol -timeline AndreaFaustini1 -older_or_equal_to 571364742176096257
+
+./follow_your_idol -older_or_equal_to auto -timeline Bhaenow
+
+
+
+./follow_your_idol -older_or_equal_to auto -timeline
+OTYOfficial
+JAYJAMES
+PaulAkister
+CHLOEJASMINEW
+ cannot unmarshal bool into Go value of type string

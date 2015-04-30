@@ -27,6 +27,9 @@ func main() {
 		panic(err)
 	}
 
+	persistence.Setup(pCfg)
+	twitter.Setup(tCfg)
+
 	// https://golang.org/pkg/flag/
 	// https://gobyexample.com/command-line-flags
 	cmdTimeline := flag.String("timeline", "", `command. fetches user timeline tweets using the twitter API. Accepts screenName ex:"Bhaenow"`)
@@ -37,26 +40,51 @@ func main() {
 	cmdGetTweet := flag.String("get_tweet", "", `command. returns cached tweet from the database. Accepts twitterId. ex:"592717057994686464"`)
 	cmdGetUser := flag.String("get_user", "", `command. returns cached twitter user from the database. Accepts screenName. ex:"Bhaenow"`)
 
-	optMoreRecentThan := flag.String("more_recent_than", "", `option. if passed, filters only tweets more recent than given tweet id. ex:"592717057994686464"`)
-	optOlderOrEqualTo := flag.String("older_or_equal_to", "", `option. if passed, filters only tweets older or equal to given tweet id. ex:"592717057994686464"`)
+	optMoreRecentThan := flag.String("more_recent_than", "", `option. if passed, filters only tweets more recent than given tweet id. use "auto" to use newest. ex:"592717057994686464"`)
+	optOlderOrEqualTo := flag.String("older_or_equal_to", "", `option. if passed, filters only tweets older or equal to given tweet id. use "auto" to use oldest. ex:"592717057994686464"`)
 
 	flag.Parse()
 
-	fmt.Println("\nParsed arguments:")
-	fmt.Printf("timeline  [%v]\n", *cmdTimeline)
-	fmt.Printf("search    [%v]\n", *cmdSearch)
-	fmt.Printf("quota     [%v]\n", *cmdQuota)
+	if false {
+		fmt.Println("\nParsed arguments:")
+		fmt.Printf("timeline  [%v]\n", *cmdTimeline)
+		fmt.Printf("search    [%v]\n", *cmdSearch)
+		fmt.Printf("quota     [%v]\n", *cmdQuota)
 
-	fmt.Printf("db_stats  [%v]\n", *cmdDbStats)
-	fmt.Printf("get_tweet [%v]\n", *cmdGetTweet)
-	fmt.Printf("get_user  [%v]\n", *cmdGetUser)
-	fmt.Println("----")
-	fmt.Printf("more_recent_than  [%v]\n", *optMoreRecentThan)
-	fmt.Printf("older_or_equal_to [%v]\n", *optOlderOrEqualTo)
-	fmt.Println("")
+		fmt.Printf("db_stats  [%v]\n", *cmdDbStats)
+		fmt.Printf("get_tweet [%v]\n", *cmdGetTweet)
+		fmt.Printf("get_user  [%v]\n", *cmdGetUser)
+		fmt.Println("----")
+		fmt.Printf("more_recent_than  [%v]\n", *optMoreRecentThan)
+		fmt.Printf("older_or_equal_to [%v]\n", *optOlderOrEqualTo)
+		fmt.Println("")
+	}
 
-	persistence.Setup(pCfg)
-	twitter.Setup(tCfg)
+	moreRecentThan := *optMoreRecentThan
+	olderOrEqualTo := *optOlderOrEqualTo
+
+	// fetch edge tweet_ids if auto is passed
+	if len(*cmdTimeline) > 0 || len(*cmdSearch) > 0 {
+		var screenName string
+		if len(*cmdTimeline) > 0 {
+			screenName = *cmdTimeline
+		} else {
+			screenName = *cmdSearch
+		}
+
+		if moreRecentThan == "auto" {
+			moreRecentThan, err = persistence.GetEdgeTweetsForUser(screenName, true)
+			if err != nil {
+				panic(err)
+			}
+		}
+		if olderOrEqualTo == "auto" {
+			olderOrEqualTo, err = persistence.GetEdgeTweetsForUser(screenName, false)
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
 
 	if *cmdQuota {
 		quota, err := twitter.GetQuota()
@@ -84,9 +112,9 @@ func main() {
 		var err error
 
 		if len(*cmdTimeline) > 0 {
-			tweets, err = twitter.GetUserTimeline(*cmdTimeline, *optMoreRecentThan, *optOlderOrEqualTo)
+			tweets, err = twitter.GetUserTimeline(*cmdTimeline, moreRecentThan, olderOrEqualTo)
 		} else {
-			tweets, err = twitter.GetSearch(*cmdSearch, *optMoreRecentThan, *optOlderOrEqualTo)
+			tweets, err = twitter.GetSearch(*cmdSearch, moreRecentThan, olderOrEqualTo)
 		}
 
 		if err != nil {

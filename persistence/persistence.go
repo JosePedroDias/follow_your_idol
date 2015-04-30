@@ -59,6 +59,16 @@ func LoadUser(screenName string) (*anaconda.User, error) {
 	return &user, err
 }
 
+func screenNameToUserId(screenName string) (string, error) {
+	var userId string
+	row := db.QueryRow(`SELECT
+		user_id
+	FROM twitter_user
+	WHERE screen_name = $1`, screenName)
+	err := row.Scan(&userId)
+	return userId, err
+}
+
 func GetUserIdToScreenNameMap() (map[string]string, error) {
 	resMap := make(map[string]string)
 
@@ -148,6 +158,24 @@ func LoadTweet(tweetId string) (*anaconda.Tweet, error) {
 
 	err := json.Unmarshal(doc, &tweet)
 	return &tweet, err
+}
+
+func GetEdgeTweetsForUser(screenName string, isMax bool) (string, error) {
+	userId, err := screenNameToUserId(screenName)
+	if err != nil {
+		return "", err
+	}
+
+	var query, tweetId string
+	if isMax {
+		query = `SELECT MAX(tweet_id) FROM twitter_tweet WHERE user_id = $1 GROUP BY user_id`
+	} else {
+		query = `SELECT MIN(tweet_id) FROM twitter_tweet WHERE user_id = $1 GROUP BY user_id`
+	}
+	row := db.QueryRow(query, userId)
+	err = row.Scan(&tweetId)
+
+	return tweetId, err
 }
 
 // ----------------------

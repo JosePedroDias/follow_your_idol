@@ -1,33 +1,34 @@
 # what is this for?
 
-The purpose of this command-line tool is to allow you scrap tweets using the Twitter API to a local PostgreSQL database.
+The purpose of this command-line tool is to allow you scrap tweets using the [Twitter API](https://dev.twitter.com/rest/public) to a local [PostgreSQL database](http://www.postgresql.org/docs/9.3/static/index.html).  
 Then one can query users and tweets locally, update timelines and do full text searches.
 
-You must have a recent version of Go (1.4 used here).
-This project uses PortgreSQL JSON columns to store tweets and users so the PostgreSQL instance must be at least 9.3
+You must have a recent version of [Go](https://golang.org/) (1.4 used here).  
+This project uses PortgreSQL JSON columns to store tweets and users so the PostgreSQL instance must be at least 9.3!
 
 
 # setup
 
-Create the files `postgresql_config.json` and `postgresql_config.json`.  
-You can use the example files `postgresql_config_example.json` and `postgresql_config_example.json` as reference for the required fields.  
-perform the queries listed in `persistence\model.sql` to create the necessary db schema.  
-you'll find some notes on `persistence\queries.sql` if you want to explore the data yourself.
+Create a twitter account for hacking (recommended not to use your personal one, in case you perform bogus actions) and request credentials for its API.  
+Create a database for caching the Twitter content.  
+Create the files `postgresql_config.json` and `postgresql_config.json` (use the example files `postgresql_config_example.json` and `postgresql_config_example.json` as reference for the required fields).  
+Perform the queries listed in `persistence\model.sql` to create the necessary db schema.  
+You'll find some notes on `persistence\queries.sql` if you want to explore the data yourself.
 
 
 # how to use
 
     go build
-    ./follow_your_idol [-<op arg>]* [<-flag>]*
+    ./follow_your_idol [-<op arg>]*
 
-use `./follow_your_idol -help` for an updated list of operations and flags
+use `./follow_your_idol -help` for an updated list of operations/options
 
 Some operations work with the twitter API, some others make exclusive work of the data cached in your database.
 
-these use twitter: `timeline`, `search`, `quota`
-these don't: `db_stats` `fts`, `get_tweet`, `get_user`
-
-these are optional, in both `timeline` and `search` operations: `more_recent_than`, `older_or_equal_to` (for twitter pagination, supports a twitter_id string or `auto`)
+These use twitter: `timeline`, `search`, `quota`  
+These don't: `db_stats` `fts`, `get_tweet`, `get_user`  
+These are optional, in both `timeline` and `search` operations: `more_recent_than`, `older_or_equal_to` (for twitter pagination, supports a twitter_id string or `auto`)
+`quota` and `db_stats` don't take any argument.
 
 
 ## examples

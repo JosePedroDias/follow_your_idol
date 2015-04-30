@@ -41,8 +41,8 @@ func SaveUser(user *anaconda.User) error {
 		return err
 	}
 	_, err = db.Exec(`INSERT INTO twitter_user
-		(screen_name, document)
-		VALUES ($1, $2)`, user.ScreenName, doc)
+		(screen_name, user_id, document)
+		VALUES ($1, $2, $3)`, user.ScreenName, user.IdStr, doc)
 	return err
 }
 

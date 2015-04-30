@@ -51,6 +51,7 @@ FROM twitter_user;
 
 SELECT
 	document->>'screen_name' as screen_name,
+	document->>'id_str' as user_id,
 	document->>'name' as name,
 	document->>'description' as description,
 	document->>'lang' as lang,

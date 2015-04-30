@@ -1,0 +1,15 @@
+./follow_your_idol -db_stats
+
+ user_id   | screen_name     | tweets | oldest     | newest     | oldest_id          | newest_id
+-----------+-----------------+--------+------------+------------+--------------------+--------------------
+ 191431067 | FleurEast       |    200 | 2015-02-06 | 2015-04-27 | 563793692897869824 | 592717057994686464
+ 702764472 | Bhaenow         |    200 | 2015-01-29 | 2015-04-28 | 560774763145347073 | 593061020907741184
+ 489758148 | AndreaFaustini1 |    200 | 2015-02-27 | 2015-04-27 | 571364742176096257 | 592648672720084992
+
+./follow_your_idol -timeline FleurEast       -more_recent_than 592717057994686464
+./follow_your_idol -timeline Bhaenow         -more_recent_than 593061020907741184
+./follow_your_idol -timeline AndreaFaustini1 -more_recent_than 592648672720084992
+
+./follow_your_idol -timeline FleurEast       -older_or_equal_to 563793692897869824
+./follow_your_idol -timeline Bhaenow         -older_or_equal_to 560774763145347073
+./follow_your_idol -timeline AndreaFaustini1 -older_or_equal_to 571364742176096257

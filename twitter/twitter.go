@@ -1,6 +1,7 @@
 package twitter
 
 import (
+	// "fmt"
 	"github.com/ChimeraCoder/anaconda"
 	"gitlab.com/josepedrodias/follow_your_idol/config"
 	"net/url"
@@ -30,8 +31,8 @@ func GetSearch(query string, moreRecentThan string, olderOrEqualTo string) ([]an
 	}
 	//v.Set("until", "2015-04-20")
 
-	tweets, err := api.GetSearch(query, v)
-	return tweets, err
+	resp, err := api.GetSearch(query, v)
+	return resp.Statuses, err
 }
 
 // https://dev.twitter.com/rest/reference/get/statuses/user_timeline
@@ -55,3 +56,13 @@ func GetUserTimeline(screenName string, moreRecentThan string, olderOrEqualTo st
 	tweets, err := api.GetUserTimeline(v)
 	return tweets, err
 }
+
+/*func GetQuota() {
+	//api.HttpClient.
+	v := url.Values{}
+	rls, err := api.GetRateLimitStatus(v)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%+v\n", rls)
+}*/

@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/ChimeraCoder/anaconda"
+	"github.com/ChimeraCoder/anaconda" // ChimeraCoder JosePedroDias
 	"gitlab.com/josepedrodias/follow_your_idol/config"
 	"gitlab.com/josepedrodias/follow_your_idol/persistence"
 	"gitlab.com/josepedrodias/follow_your_idol/print"
@@ -51,15 +51,18 @@ func main() {
 	persistence.Setup(pCfg)
 	twitter.Setup(tCfg)
 
+	/*twitter.GetQuota()
+	return*/
+
 	if *cmdDbStats {
 		statuses, err := persistence.GetTwitterUserStatus()
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println(" user_id   | screen_name     | tweets | oldest     | newest     | oldest_id          | newest_id")
-		fmt.Println("-----------+-----------------+--------+------------+------------+--------------------+--------------------")
+		fmt.Println(" user_id    | screen_name     | tweets | oldest     | newest     | oldest_id          | newest_id")
+		fmt.Println("------------+-----------------+--------+------------+------------+--------------------+--------------------")
 		for _, s := range statuses {
-			fmt.Printf(" %s | %-15s | %6d | %s | %s | %s | %s\n", s.UserId, s.ScreenName, s.NumTweets, s.Oldest.Format("2006-01-02"), s.Newest.Format("2006-01-02"), s.OldestId, s.NewestId)
+			fmt.Printf(" %-10s | %-15s | %6d | %s | %s | %s | %s\n", s.UserId, s.ScreenName, s.NumTweets, s.Oldest.Format("2006-01-02"), s.Newest.Format("2006-01-02"), s.OldestId, s.NewestId)
 		}
 	} else if len(*cmdTimeline) > 0 || len(*cmdSearch) > 0 {
 		var tweets []anaconda.Tweet

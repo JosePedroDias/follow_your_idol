@@ -39,6 +39,7 @@ func main() {
 	cmdDbStats := flag.Bool("db_stats", false, `command. returns database status. Does not accept argument.`)
 	cmdGetTweet := flag.String("get_tweet", "", `command. returns cached tweet from the database. Accepts twitterId. ex:"592717057994686464"`)
 	cmdGetUser := flag.String("get_user", "", `command. returns cached twitter user from the database. Accepts screenName. ex:"Bhaenow"`)
+	cmdFTS := flag.String("fts", "", `command. does full text search on cached tweet bodies. accepts query string. ex:"signed"`)
 
 	optMoreRecentThan := flag.String("more_recent_than", "", `option. if passed, filters only tweets more recent than given tweet id. use "auto" to use newest. ex:"592717057994686464"`)
 	optOlderOrEqualTo := flag.String("older_or_equal_to", "", `option. if passed, filters only tweets older or equal to given tweet id. use "auto" to use oldest. ex:"592717057994686464"`)
@@ -151,6 +152,15 @@ func main() {
 	} else if len(*cmdGetUser) > 0 {
 		user, _ := persistence.LoadUser(*cmdGetUser)
 		print.DisplayUser(user)
+	} else if len(*cmdFTS) > 0 {
+		results, err := persistence.FullTextSearchTweets(*cmdFTS)
+		if err != nil {
+			panic(err)
+		}
+		for _, r := range results {
+			fmt.Printf("%s | %s | %s\n", r.UserId, r.TweetId, r.Body)
+		}
+		fmt.Printf("# results: %d\n", len(results))
 	} else {
 		fmt.Println("No command passed - nothing to do. Use -help to learn the command-line API.")
 	}

@@ -25,6 +25,12 @@ type TwitterUserStatus struct {
 	NewestId   string    `json:"oldest_id"`
 }
 
+type TwitterTweetFTSResult struct {
+	UserId  string `json:"user_id"`
+	TweetId string `json:"tweet_id"`
+	Body    string `json:"body"`
+}
+
 var db *sql.DB
 
 func Setup(config *config.PostgresqlConfig) error {
@@ -179,3 +185,30 @@ func GetEdgeTweetsForUser(screenName string, isMax bool) (string, error) {
 }
 
 // ----------------------
+
+func FullTextSearchTweets(query string) ([]TwitterTweetFTSResult, error) {
+	var results []TwitterTweetFTSResult = make([]TwitterTweetFTSResult, 0)
+
+	rows, err := db.Query(`SELECT
+  user_id,
+  tweet_id,
+  body
+FROM twitter_tweet_indexed
+WHERE body2 @@ to_tsquery('english', $1)
+ORDER BY ts_rank(body2, to_tsquery('english', $1)) DESC`, query)
+	defer rows.Close()
+
+	for rows.Next() {
+		var r TwitterTweetFTSResult
+		if err := rows.Scan(&r.UserId, &r.TweetId, &r.Body); err != nil {
+			return results, err
+		}
+		results = append(results, r)
+	}
+
+	if err := rows.Err(); err != nil {
+		return results, err
+	}
+
+	return results, err
+}

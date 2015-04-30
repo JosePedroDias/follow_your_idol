@@ -9,7 +9,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/ChimeraCoder/anaconda"
+	"github.com/JosePedroDias/anaconda"
 	_ "github.com/lib/pq"
 	"gitlab.com/josepedrodias/follow_your_idol/config"
 	"time"

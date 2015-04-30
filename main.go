@@ -3,11 +3,16 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/ChimeraCoder/anaconda" // ChimeraCoder JosePedroDias
+	"github.com/JosePedroDias/anaconda" // ChimeraCoder JosePedroDias
 	"gitlab.com/josepedrodias/follow_your_idol/config"
 	"gitlab.com/josepedrodias/follow_your_idol/persistence"
 	"gitlab.com/josepedrodias/follow_your_idol/print"
 	"gitlab.com/josepedrodias/follow_your_idol/twitter"
+	"time"
+)
+
+const ( // Mon Jan 2 15:04:05 MST 2006
+	HHMMSS = "15:04:05"
 )
 
 func main() {
@@ -26,6 +31,7 @@ func main() {
 	// https://gobyexample.com/command-line-flags
 	cmdTimeline := flag.String("timeline", "", `command. fetches user timeline tweets using the twitter API. Accepts screenName ex:"Bhaenow"`)
 	cmdSearch := flag.String("search", "", `command. searches tweets using the twitter API. Accepts query string. ex:"from:Bhaenow"`)
+	cmdQuota := flag.Bool("quota", false, `command. returns relevant quotas using the twitter API.  Does not accept argument.`)
 
 	cmdDbStats := flag.Bool("db_stats", false, `command. returns database status. Does not accept argument.`)
 	cmdGetTweet := flag.String("get_tweet", "", `command. returns cached tweet from the database. Accepts twitterId. ex:"592717057994686464"`)
@@ -39,6 +45,7 @@ func main() {
 	fmt.Println("\nParsed arguments:")
 	fmt.Printf("timeline  [%v]\n", *cmdTimeline)
 	fmt.Printf("search    [%v]\n", *cmdSearch)
+	fmt.Printf("quota     [%v]\n", *cmdQuota)
 
 	fmt.Printf("db_stats  [%v]\n", *cmdDbStats)
 	fmt.Printf("get_tweet [%v]\n", *cmdGetTweet)
@@ -51,10 +58,18 @@ func main() {
 	persistence.Setup(pCfg)
 	twitter.Setup(tCfg)
 
-	/*twitter.GetQuota()
-	return*/
-
-	if *cmdDbStats {
+	if *cmdQuota {
+		quota, err := twitter.GetQuota()
+		if err != nil {
+			panic(err)
+		}
+		utLim := quota.Resources.Statuses.UserTimeline
+		seLim := quota.Resources.Search.Tweets
+		fmt.Println(" service  | quota     | reset")
+		fmt.Println("----------+-----------+----------")
+		fmt.Printf(" search   | %3d / %3d | %s\n", utLim.Remaining, utLim.Limit, time.Unix(utLim.Reset, 0).Format(HHMMSS))
+		fmt.Printf(" timeline | %3d / %3d | %s\n", seLim.Remaining, seLim.Limit, time.Unix(seLim.Reset, 0).Format(HHMMSS))
+	} else if *cmdDbStats {
 		statuses, err := persistence.GetTwitterUserStatus()
 		if err != nil {
 			panic(err)

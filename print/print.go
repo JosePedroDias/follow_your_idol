@@ -3,7 +3,7 @@ package print
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ChimeraCoder/anaconda"
+	"github.com/JosePedroDias/anaconda"
 )
 
 func DisplayTweet(tweet *anaconda.Tweet) {

@@ -1,8 +1,7 @@
 package twitter
 
 import (
-	// "fmt"
-	"github.com/ChimeraCoder/anaconda"
+	"github.com/JosePedroDias/anaconda"
 	"gitlab.com/josepedrodias/follow_your_idol/config"
 	"net/url"
 )
@@ -57,12 +56,8 @@ func GetUserTimeline(screenName string, moreRecentThan string, olderOrEqualTo st
 	return tweets, err
 }
 
-/*func GetQuota() {
-	//api.HttpClient.
+func GetQuota() (anaconda.RateLimit, error) {
 	v := url.Values{}
 	rls, err := api.GetRateLimitStatus(v)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("%+v\n", rls)
-}*/
+	return rls, err
+}

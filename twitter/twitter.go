@@ -2,7 +2,7 @@ package twitter
 
 import (
 	"github.com/JosePedroDias/anaconda"
-	"gitlab.com/josepedrodias/follow_your_idol/config"
+	"github.com/JosePedroDias/follow_your_idol/config"
 	"net/url"
 )
 

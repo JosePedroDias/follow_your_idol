@@ -4,10 +4,10 @@ import (
 	"flag"
 	"fmt"
 	"github.com/JosePedroDias/anaconda" // ChimeraCoder JosePedroDias
-	"gitlab.com/josepedrodias/follow_your_idol/config"
-	"gitlab.com/josepedrodias/follow_your_idol/persistence"
-	"gitlab.com/josepedrodias/follow_your_idol/print"
-	"gitlab.com/josepedrodias/follow_your_idol/twitter"
+	"github.com/JosePedroDias/follow_your_idol/config"
+	"github.com/JosePedroDias/follow_your_idol/persistence"
+	"github.com/JosePedroDias/follow_your_idol/print"
+	"github.com/JosePedroDias/follow_your_idol/twitter"
 	"time"
 )
 

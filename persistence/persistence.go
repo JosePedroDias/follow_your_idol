@@ -10,8 +10,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/JosePedroDias/anaconda"
+	"github.com/JosePedroDias/follow_your_idol/config"
 	_ "github.com/lib/pq"
-	"gitlab.com/josepedrodias/follow_your_idol/config"
 	"time"
 )
 

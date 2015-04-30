@@ -10,7 +10,9 @@ This project uses PortgreSQL JSON columns to store tweets and users so the Postg
 # setup
 
 Create the files `postgresql_config.json` and `postgresql_config.json`.  
-You can use the example files `postgresql_config_example.json` and `postgresql_config_example.json` as reference for the required fields.
+You can use the example files `postgresql_config_example.json` and `postgresql_config_example.json` as reference for the required fields.  
+perform the queries listed in `persistence\model.sql` to create the necessary db schema.  
+you'll find some notes on `persistence\queries.sql` if you want to explore the data yourself.
 
 
 # how to use
